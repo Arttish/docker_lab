@@ -1,0 +1,49 @@
+version: '3'
+
+name: "docker_lab"
+
+services:
+  gitea:
+    environment:
+      MYSQL_DB_HOST: mysql:3306
+      GITEA_PORT: 3000
+      MYSQL_DB_NAME: gitea
+      MYSQL_DB_USER: gitea
+      MYSQL_DB_PASSWORD: pass
+    build: 
+      context: .
+      args: 
+        - MYSQL_DB_HOST="mysql:3306"
+        - GITEA_PORT=3000
+        - MYSQL_DB_NAME=gitea
+        - MYSQL_DB_USER=gitea
+        - MYSQL_DB_PASSWORD=pass
+    ports: ["3000:3000"]
+
+    volumes:
+      - data:/data
+
+    networks:
+      - docker_lab
+    
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: gitea
+      MYSQL_DATABASE: gitea
+      MYSQL_USER: gitea
+      MYSQL_PASSWORD: pass
+    ports: ["3306:3306"]
+
+    networks:
+      - docker_lab
+
+volumes:
+  data: {}
+
+networks:
+  docker_lab:
+    external: false
